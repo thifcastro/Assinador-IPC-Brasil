@@ -1,0 +1,42 @@
+name: windows-package
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main", "work" ]
+
+jobs:
+  build-and-package:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Build JAR
+        run: mvn clean package -DskipTests
+
+      - name: Package Windows artifacts
+        shell: cmd
+        run: scripts\\package-windows.bat
+
+      - name: Upload installer EXE artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Assinador-ICP-Brasil-Setup
+          path: dist/installer/*.exe
+          if-no-files-found: error
+
+      - name: Upload portable ZIP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Assinador-ICP-Brasil-Portable
+          path: dist/portable/*.zip
+          if-no-files-found: warn

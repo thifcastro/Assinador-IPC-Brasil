@@ -110,3 +110,37 @@ O script `scripts\package-windows.bat`:
 - executa build Maven se necessário;
 - gera `app-image` em `dist\image`;
 - gera instalador Windows chamado **Assinador ICP-Brasil** em `dist\installer`.
+
+
+## Distribuição para usuário final (Windows)
+
+> **Importante:** arquivos `.bat` são scripts internos para desenvolvedores/CI (ex.: GitHub Actions). Eles **não** são o formato final de instalação para o usuário.
+
+Para o usuário final, o formato principal é:
+- **Instalador**: `Assinador-ICP-Brasil-Setup.exe`
+
+Opcionalmente, também pode ser distribuído:
+- **Versão portátil**: `Assinador-ICP-Brasil-Portable.zip` (extrair e executar)
+
+### O que o usuário final precisa
+
+- **Não precisa** instalar Java.
+- **Não precisa** instalar Maven.
+- **Precisa** instalar o driver/middleware do token/cartão A3 e usar a DLL PKCS#11 do fornecedor.
+
+### Como gerar os artefatos de distribuição (dev/CI)
+
+1. Execute `scripts\package-windows.bat` em Windows com JDK 17 (com `jpackage`) + Maven.
+2. O script gera:
+   - `dist\installer\Assinador-ICP-Brasil-Setup.exe`
+   - `dist\portable\Assinador-ICP-Brasil-Portable.zip`
+3. Publique esses arquivos para download do usuário final.
+
+## GitHub Actions (artefatos)
+
+Workflow: `.github/workflows/windows-package.yml`
+- compila o projeto;
+- executa o empacotamento com `jpackage`;
+- publica como artifact:
+  - instalador `.exe`;
+  - versão portátil `.zip` (quando gerada).
