@@ -79,6 +79,30 @@ public class PdfViewerPanel extends JPanel {
         return pageIndex;
     }
 
+
+    public boolean hasComplexPageGeometry() {
+        if (document == null) {
+            return false;
+        }
+        var page = document.getPage(pageIndex);
+        boolean rotated = page.getRotation() != 0;
+        boolean cropDiffers = !page.getCropBox().equals(page.getMediaBox());
+        return rotated || cropDiffers;
+    }
+
+    public String getGeometryWarningMessage() {
+        if (document == null) {
+            return "";
+        }
+        var page = document.getPage(pageIndex);
+        boolean rotated = page.getRotation() != 0;
+        boolean cropDiffers = !page.getCropBox().equals(page.getMediaBox());
+        if (!rotated && !cropDiffers) {
+            return "";
+        }
+        return "Aviso: esta página possui rotação e/ou CropBox diferente do MediaBox. A posição visual da assinatura pode exigir ajuste manual.";
+    }
+
     public SignaturePosition getSignaturePosition() {
         if (document == null || renderedPage == null || selectionRect == null || selectionRect.width < 2 || selectionRect.height < 2) {
             return null;

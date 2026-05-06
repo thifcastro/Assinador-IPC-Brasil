@@ -29,6 +29,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.pdfbox.pdmodel.interactive.digitalsignature.PDSignature;
+
 public class MainWindow extends JFrame {
 
     private final JButton openButton = new JButton("Abrir PDF");
@@ -202,6 +204,18 @@ public class MainWindow extends JFrame {
 
         try {
             boolean lockAfterSigning = lockDocumentRadio.isSelected();
+            List<PDSignature> signatures = currentDocument.getSignatureDictionaries();
+            if (lockAfterSigning && signatures != null && !signatures.isEmpty()) {
+                log("Este PDF já possui assinatura anterior. O modo de bloqueio/certificação só pode ser usado na primeira assinatura do documento. Use o modo normal para adicionar nova assinatura.");
+                return;
+            }
+            if (viewerPanel.hasComplexPageGeometry()) {
+                log(viewerPanel.getGeometryWarningMessage());
+            }
+            if (cert.getCertificateChain() == null || cert.getCertificateChain().isEmpty()) {
+                log("Aviso: cadeia de certificados do token não disponível para este alias. Será usado apenas o certificado do assinante.");
+            }
+
             signerService.signPdf(currentPdfFile, chooser.getSelectedFile(), cert, position, lockAfterSigning);
             log("Modo de assinatura: " + (lockAfterSigning ? "Bloqueio/Certificação" : "Normal (permite assinaturas futuras)"));
             log("PDF assinado salvo em: " + chooser.getSelectedFile().getAbsolutePath());

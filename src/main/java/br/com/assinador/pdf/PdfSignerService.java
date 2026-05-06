@@ -105,7 +105,11 @@ public class PdfSignerService {
         gen.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(
                 new JcaDigestCalculatorProviderBuilder().setProvider("BC").build())
                 .build(sha256Signer, certInfo.getCertificate()));
-        gen.addCertificates(new JcaCertStore(List.of(certInfo.getCertificate())));
+        List<java.security.cert.X509Certificate> chain = certInfo.getCertificateChain();
+        List<java.security.cert.X509Certificate> toEmbed = (chain == null || chain.isEmpty())
+                ? List.of(certInfo.getCertificate())
+                : chain;
+        gen.addCertificates(new JcaCertStore(toEmbed));
         CMSSignedData signedData = gen.generate(new CMSProcessableByteArray(content), false);
         return signedData.getEncoded();
     }

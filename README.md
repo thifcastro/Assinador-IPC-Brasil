@@ -144,3 +144,10 @@ Workflow: `.github/workflows/windows-package.yml`
 - publica como artifact:
   - instalador `.exe`;
   - versão portátil `.zip` (quando gerada).
+
+
+## Regras do modo bloqueio/certificação
+
+- O modo de bloqueio/certificação só pode ser usado na **primeira assinatura** do PDF.
+- Se o documento já tiver assinatura anterior, use o modo normal para adicionar assinatura incremental.
+- A cadeia de certificados do alias selecionado é incluída no CMS quando disponível no token (`getCertificateChain`).
