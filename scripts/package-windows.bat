@@ -5,7 +5,7 @@ cd /d %~dp0\..
 
 set APP_NAME=Assinador ICP-Brasil
 set APP_VERSION=1.0.0
-set MAIN_JAR=assinador-ipc-brasil-1.0.0-SNAPSHOT.jar
+set MAIN_JAR=assinador-ipc-brasil-1.0.0-SNAPSHOT-all.jar
 set MAIN_CLASS=br.com.assinador.Main
 set DIST_DIR=dist
 set IMAGE_DIR=%DIST_DIR%\image
@@ -20,12 +20,17 @@ if errorlevel 1 (
 )
 
 if not exist target\%MAIN_JAR% (
-  echo [package] JAR nao encontrado. Executando build...
+  echo [package] JAR com dependencias nao encontrado. Executando build...
   call mvn clean package -DskipTests
   if errorlevel 1 (
     echo [package] Falha no build Maven.
     exit /b 1
   )
+)
+
+if not exist target\%MAIN_JAR% (
+  echo [package] JAR com dependencias ainda nao encontrado em target\%MAIN_JAR%.
+  exit /b 1
 )
 
 if not exist %DIST_DIR% mkdir %DIST_DIR%
