@@ -9,12 +9,14 @@ public class CertificateInfo {
     private final X509Certificate certificate;
     private final PrivateKey privateKey;
     private final List<X509Certificate> certificateChain;
+    private final java.security.Provider provider;
 
-    public CertificateInfo(String alias, X509Certificate certificate, PrivateKey privateKey, List<X509Certificate> certificateChain) {
+    public CertificateInfo(String alias, X509Certificate certificate, PrivateKey privateKey, List<X509Certificate> certificateChain, java.security.Provider provider) {
         this.alias = alias;
         this.certificate = certificate;
         this.privateKey = privateKey;
         this.certificateChain = certificateChain;
+        this.provider = provider;
     }
 
     public String getAlias() {
@@ -31,6 +33,10 @@ public class CertificateInfo {
 
     public List<X509Certificate> getCertificateChain() {
         return certificateChain;
+    }
+
+    public java.security.Provider getProvider() {
+        return provider;
     }
 
     public String getDisplayName() {
