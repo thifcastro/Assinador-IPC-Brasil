@@ -46,9 +46,7 @@ jpackage ^
   --main-class "%MAIN_CLASS%" ^
   --app-version "%APP_VERSION%" ^
   --vendor "Assinador ICP-Brasil" ^
-  --description "Assinador PDF ICP-Brasil A3 via PKCS#11" ^
-  --win-shortcut ^
-  --win-menu
+  --description "Assinador PDF ICP-Brasil A3 via PKCS#11"
 if errorlevel 1 (
   echo [package] Falha ao gerar app-image.
   exit /b 1
