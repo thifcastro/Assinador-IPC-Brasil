@@ -104,7 +104,8 @@ public class PdfSignerService {
             throw new IllegalStateException("Provider PKCS#11 não encontrado para o certificado selecionado.");
         }
 
-        JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder("SHA256withRSA");
+        String signatureAlgorithm = resolveSignatureAlgorithm(certInfo);
+        JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder(signatureAlgorithm);
         signerBuilder.setProvider(signingProvider);
         ContentSigner sha256Signer = signerBuilder.build(certInfo.getPrivateKey());
         gen.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(

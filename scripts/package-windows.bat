@@ -5,7 +5,7 @@ cd /d %~dp0\..
 
 set APP_NAME=Assinador ICP-Brasil
 set APP_VERSION=1.0.0
-set MAIN_JAR=assinador-ipc-brasil-1.0.0-SNAPSHOT.jar
+set MAIN_JAR=assinador-ipc-brasil-1.0.0-SNAPSHOT-all.jar
 set MAIN_CLASS=br.com.assinador.Main
 set DIST_DIR=dist
 set IMAGE_DIR=%DIST_DIR%\image

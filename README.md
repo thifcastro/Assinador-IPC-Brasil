@@ -22,7 +22,7 @@ mvn clean package
 ## Execução
 
 ```bash
-java -jar target/assinador-ipc-brasil-1.0.0-SNAPSHOT.jar
+java -jar target/assinador-ipc-brasil-1.0.0-SNAPSHOT-all.jar
 ```
 
 ## Fluxo de uso
@@ -151,3 +151,10 @@ Workflow: `.github/workflows/windows-package.yml`
 - O modo de bloqueio/certificação só pode ser usado na **primeira assinatura** do PDF.
 - Se o documento já tiver assinatura anterior, use o modo normal para adicionar assinatura incremental.
 - A cadeia de certificados do alias selecionado é incluída no CMS quando disponível no token (`getCertificateChain`).
+
+
+## Algoritmo de assinatura
+
+- Chave RSA: `SHA256withRSA`.
+- Chave EC/ECDSA: `SHA256withECDSA`.
+- Outros algoritmos: não suportados nesta versão (erro explícito).
