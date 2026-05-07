@@ -31,6 +31,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.security.Provider;
 import java.security.Security;
 import java.util.Calendar;
 import java.util.List;
@@ -99,16 +100,36 @@ public class PdfSignerService {
 
     private byte[] sign(byte[] content, CertificateInfo certInfo) throws Exception {
         CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
-        ContentSigner sha256Signer = new JcaContentSignerBuilder("SHA256withRSA")
-                .setProvider(certInfo.getPrivateKey().getProvider())
+
+        Provider signingProvider = certInfo.getProvider();
+        if (signingProvider == null) {
+            throw new IllegalStateException("Provider PKCS#11 não encontrado para o certificado selecionado.");
+        }
+
+        String keyAlgorithm = certInfo.getCertificate().getPublicKey().getAlgorithm();
+        String signatureAlgorithm;
+
+        if ("RSA".equalsIgnoreCase(keyAlgorithm)) {
+            signatureAlgorithm = "SHA256withRSA";
+        } else if ("EC".equalsIgnoreCase(keyAlgorithm) || "ECDSA".equalsIgnoreCase(keyAlgorithm)) {
+            signatureAlgorithm = "SHA256withECDSA";
+        } else {
+            throw new IllegalArgumentException("Algoritmo de chave não suportado: " + keyAlgorithm);
+        }
+
+        ContentSigner signer = new JcaContentSignerBuilder(signatureAlgorithm)
+                .setProvider(signingProvider)
                 .build(certInfo.getPrivateKey());
+
         gen.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(
                 new JcaDigestCalculatorProviderBuilder().setProvider("BC").build())
-                .build(sha256Signer, certInfo.getCertificate()));
+                .build(signer, certInfo.getCertificate()));
+
         List<java.security.cert.X509Certificate> chain = certInfo.getCertificateChain();
         List<java.security.cert.X509Certificate> toEmbed = (chain == null || chain.isEmpty())
                 ? List.of(certInfo.getCertificate())
                 : chain;
+
         gen.addCertificates(new JcaCertStore(toEmbed));
         CMSSignedData signedData = gen.generate(new CMSProcessableByteArray(content), false);
         return signedData.getEncoded();
